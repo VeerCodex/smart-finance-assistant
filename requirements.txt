@@ -1,0 +1,7 @@
+flask
+google-generativeai
+python-dotenv
+requests
+gspread
+google-auth
+plotly

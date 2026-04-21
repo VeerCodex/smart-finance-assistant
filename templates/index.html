@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" 
+          content="width=device-width, 
+                   initial-scale=1.0">
+    <title>💰 Smart Finance Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(
+                135deg, #1e3a5f, #2563eb
+            );
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: white;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #93c5fd;
+        }
+
+        .powered-by {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #93c5fd;
+        }
+
+        /* Main Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            color: #60a5fa;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        /* Input Styles */
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-warning {
+            background: #d97706;
+            color: white;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-msg {
+            align-items: flex-end;
+        }
+
+        .bot-msg {
+            align-items: flex-start;
+        }
+
+        .bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .user-msg .bubble {
+            background: #2563eb;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-msg .bubble {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #334155;
+        }
+
+        .msg-time {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .chat-input-area button {
+            width: auto;
+            padding: 10px 20px;
+        }
+
+        /* Summary Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Expense List */
+        .expense-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: #0f172a;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            border: 1px solid #334155;
+        }
+
+        .expense-category {
+            color: #60a5fa;
+        }
+
+        .expense-amount {
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        /* Currency Converter */
+        .currency-result {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 10px;
+            border: 1px solid #334155;
+            display: none;
+        }
+
+        .currency-result .amount {
+            font-size: 22px;
+            color: #34d399;
+            font-weight: bold;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            color: #60a5fa;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin: 2px;
+        }
+
+        .tag-green {
+            background: #14532d;
+            color: #4ade80;
+        }
+
+        .tag-red {
+            background: #7f1d1d;
+            color: #f87171;
+        }
+
+        .tag-blue {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div>
+        <h1>💰 Smart Finance Assistant</h1>
+        <p>AI-Powered Personal Finance Manager</p>
+    </div>
+    <div class="powered-by">
+        ⚡ Powered by Google Gemini AI
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="container">
+
+    <!-- Left Panel - Expense Tracker -->
+    <div>
+        <!-- Set Income -->
+        <div class="card" style="margin-bottom:15px">
+            <h3>💵 Set Monthly Income</h3>
+            <input type="number"
+                   id="incomeInput"
+                   placeholder="Enter monthly income"
+                   min="0"/>
+            <button class="btn btn-success"
+                    onclick="setIncome()">
+                Set Income
+            </button>
+        </div>
+
+        <!-- Add Expense -->
+        <div class="card" style="margin-bottom:15px">
+            <h3>➕ Add Expense</h3>
+            <select id="expenseCategory">
+                <option value="Food">🍔 Food</option>
+                <option value="Transport">
+                    🚗 Transport
+                </option>
+                <option value="Housing">
+                    🏠 Housing
+                </option>
+                <option value="Entertainment">
+                    🎬 Entertainment
+                </option>
+                <option value="Healthcare">
+                    🏥 Healthcare
+                </option>
+                <option value="Education">
+                    📚 Education
+                </option>
+                <option value="Shopping">
+                    🛍️ Shopping
+                </option>
+                <option value="Bills">
+                    📄 Bills
+                </option>
+                <option value="Other">
+                    📦 Other
+                </option>
+            </select>
+            <input type="number"
+                   id="expenseAmount"
+                   placeholder="Amount ($)"
+                   min="0"/>
+            <input type="text"
+                   id="expenseDesc"
+                   placeholder="Description (optional)"/>
+            <button class="btn btn-primary"
+                    onclick="addExpense()">
+                Add Expense
+            </button>
+        </div>
+
+        <!-- Summary -->
+        <div class="card">
+            <h3>📊 Summary</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value"
+                         id="totalIncome">
+                        $0
+                    </div>
+                    <div class="stat-label">
+                        Income
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"
+                         id="totalExpenses"
+                         style="color:#f87171">
+                        $0
+                    </div>
+                    <div class="stat-label">
+                        Expenses
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"
+                         id="totalSavings"
+                         style="color:#34d399">
+                        $0
+                    </div>
+                    <div class="stat-label">
+                        Savings
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"
+                         id="healthStatus">
+                        --
+                    </div>
+                    <div class="stat-label">
+                        Health
+                    </div>
+                </div>
+            </div>
+
+            <div class="expense-list"
+                 id="expenseList">
+                <p style="color:#64748b;
+                          font-size:13px;
+                          text-align:center">
+                    No expenses yet
+                </p>
+            </div>
+
+            <button class="btn btn-warning"
+                    onclick="analyzeBudget()"
+                    style="margin-top:10px">
+                🤖 AI Budget Analysis
+            </button>
+        </div>
+    </div>
+
+    <!-- Center - Chat -->
+    <div class="card chat-section">
+        <h3>🤖 AI Finance Advisor</h3>
+
+        <div class="chat-messages"
+             id="chatMessages">
+            <div class="message bot-msg">
+                <div class="bubble">
+                    👋 Hello! I'm your Smart Finance
+                    Assistant powered by Google Gemini!
+
+                    I can help you with:
+                    💰 Budget planning
+                    📈 Investment advice
+                    💳 Expense analysis
+                    🌍 Currency conversion
+                    📊 Financial health tips
+
+                    How can I help you today?
+                </div>
+                <span class="msg-time">Just now</span>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text"
+                   id="chatInput"
+                   placeholder="Ask anything about finance..."
+                   onkeypress="handleKey(event)"/>
+            <button class="btn btn-primary"
+                    onclick="sendMessage()">
+                Send 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+        <!-- Currency Converter -->
+        <div class="card" style="margin-bottom:15px">
+            <h3>🌍 Currency Converter</h3>
+            <input type="number"
+                   id="convertAmount"
+                   placeholder="Amount"
+                   value="100"/>
+            <select id="fromCurrency">
+                <option value="USD">🇺🇸 USD</option>
+                <option value="EUR">🇪🇺 EUR</option>
+                <option value="GBP">🇬🇧 GBP</option>
+                <option value="INR">🇮🇳 INR</option>
+                <option value="JPY">🇯🇵 JPY</option>
+                <option value="AUD">🇦🇺 AUD</option>
+                <option value="CAD">🇨🇦 CAD</option>
+            </select>
+            <select id="toCurrency">
+                <option value="EUR">🇪🇺 EUR</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="GBP">🇬🇧 GBP</option>
+                <option value="INR">🇮🇳 INR</option>
+                <option value="JPY">🇯🇵 JPY</option>
+                <option value="AUD">🇦🇺 AUD</option>
+                <option value="CAD">🇨🇦 CAD</option>
+            </select>
+            <button class="btn btn-primary"
+                    onclick="convertCurrency()">
+                Convert 💱
+            </button>
+            <div class="currency-result"
+                 id="currencyResult">
+                <div class="amount"
+                     id="convertedAmount">
+                    --
+                </div>
+                <div style="color:#64748b;
+                            font-size:12px"
+                     id="rateInfo">
+                </div>
+            </div>
+        </div>
+
+        <!-- Investment Advisor -->
+        <div class="card" style="margin-bottom:15px">
+            <h3>📈 Investment Advisor</h3>
+            <input type="number"
+                   id="investAmount"
+                   placeholder="Investment amount ($)"/>
+            <select id="riskLevel">
+                <option value="low">
+                    🟢 Low Risk
+                </option>
+                <option value="medium">
+                    🟡 Medium Risk
+                </option>
+                <option value="high">
+                    🔴 High Risk
+                </option>
+            </select>
+            <button class="btn btn-success"
+                    onclick="getInvestmentAdvice()">
+                Get Advice 📊
+            </button>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="card">
+            <h3>💡 Quick Finance Tips</h3>
+            <div style="font-size:13px;
+                        line-height:1.8;
+                        color:#94a3b8">
+                <p>✅ Save 20% of income monthly</p>
+                <p>✅ Build 6-month emergency fund</p>
+                <p>✅ Pay off high-interest debt first</p>
+                <p>✅ Diversify investments</p>
+                <p>✅ Track every expense</p>
+                <p>✅ Review budget monthly</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==================
+    // CHAT FUNCTIONS
+    // ==================
+
+    async function sendMessage() {
+        const input = document.getElementById(
+            'chatInput'
+        );
+        const message = input.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        input.value = '';
+        showLoading();
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            });
+
+            const data = await res.json();
+            removeLoading();
+
+            if (data.status === 'success') {
+                addMessage(data.response, 'bot');
+            } else {
+                addMessage(
+                    'Sorry, something went wrong!',
+                    'bot'
+                );
+            }
+        } catch (err) {
+            removeLoading();
+            addMessage(
+                'Connection error. Try again!',
+                'bot'
+            );
+        }
+    }
+
+    function addMessage(text, sender) {
+        const chat = document.getElementById(
+            'chatMessages'
+        );
+        const div = document.createElement('div');
+        div.className = `message ${sender}-msg`;
+
+        const time = new Date().toLocaleTimeString(
+            [], {hour: '2-digit', minute: '2-digit'}
+        );
+
+        div.innerHTML = `
+            <div class="bubble">${text}</div>
+            <span class="msg-time">${time}</span>
+        `;
+
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showLoading() {
+        const chat = document.getElementById(
+            'chatMessages'
+        );
+        const div = document.createElement('div');
+        div.id = 'loading';
+        div.className = 'loading';
+        div.textContent = '⏳ Analyzing...';
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function removeLoading() {
+        const loading = document.getElementById(
+            'loading'
+        );
+        if (loading) loading.remove();
+    }
+
+    function handleKey(event) {
+        if (event.key === 'Enter') sendMessage();
+    }
+
+    // ==================
+    // EXPENSE FUNCTIONS
+    // ==================
+
+    async function setIncome() {
+        const income = document.getElementById(
+            'incomeInput'
+        ).value;
+
+        if (!income) {
+            alert('Please enter income amount');
+            return;
+        }
+
+        const res = await fetch('/api/income/set', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                income: parseFloat(income)
+            })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+            addMessage(
+                `✅ Income set to $${income}. ` +
+                `Now add your expenses to track!`,
+                'bot'
+            );
+            updateSummary();
+        }
+    }
+
+    async function addExpense() {
+        const category = document.getElementById(
+            'expenseCategory'
+        ).value;
+        const amount = document.getElementById(
+            'expenseAmount'
+        ).value;
+        const desc = document.getElementById(
+            'expenseDesc'
+        ).value;
+
+        if (!amount) {
+            alert('Please enter expense amount');
+            return;
+        }
+
+        const res = await fetch('/api/expense/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                category: category,
+                amount: parseFloat(amount),
+                description: desc
+            })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+            document.getElementById(
+                'expenseAmount'
+            ).value = '';
+            document.getElementById(
+                'expenseDesc'
+            ).value = '';
+
+            addMessage(
+                `✅ Added ${category} expense: ` +
+                `$${amount}`,
+                'bot'
+            );
+            updateSummary();
+        }
+    }
+
+    async function updateSummary() {
+        const res = await fetch('/api/expense/summary');
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            document.getElementById(
+                'totalIncome'
+            ).textContent = `$${data.income}`;
+
+            document.getElementById(
+                'totalExpenses'
+            ).textContent = `$${data.total_expenses}`;
+
+            document.getElementById(
+                'totalSavings'
+            ).textContent = `$${data.savings}`;
+
+            document.getElementById(
+                'healthStatus'
+            ).textContent = data.health?.status || '--';
+
+            // Update expense list
+            const list = document.getElementById(
+                'expenseList'
+            );
+            list.innerHTML = '';
+
+            data.expenses.forEach(exp => {
+                list.innerHTML += `
+                    <div class="expense-item">
+                        <span class="expense-category">
+                            ${exp.category}
+                        </span>
+                        <span class="expense-amount">
+                            -$${exp.amount}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    async function analyzeBudget() {
+        addMessage(
+            '📊 Analyzing your budget...', 'user'
+        );
+        showLoading();
+
+        const res = await fetch(
+            '/api/analyze/expenses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await res.json();
+        removeLoading();
+
+        if (data.status === 'success') {
+            addMessage(data.analysis, 'bot');
+        } else {
+            addMessage(
+                'Please add expenses first!', 'bot'
+            );
+        }
+    }
+
+    // ==================
+    // CURRENCY FUNCTIONS
+    // ==================
+
+    async function convertCurrency() {
+        const amount = document.getElementById(
+            'convertAmount'
+        ).value;
+        const from = document.getElementById(
+            'fromCurrency'
+        ).value;
+        const to = document.getElementById(
+            'toCurrency'
+        ).value;
+
+        const res = await fetch(
+            '/api/currency/convert', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: parseFloat(amount),
+                from: from,
+                to: to
+            })
+        });
+
+        const data = await res.json();
+        const result = document.getElementById(
+            'currencyResult'
+        );
+        result.style.display = 'block';
+
+        if (data.status === 'success') {
+            document.getElementById(
+                'convertedAmount'
+            ).textContent =
+                `${data.converted} ${to}`;
+
+            document.getElementById(
+                'rateInfo'
+            ).textContent =
+                `Rate: 1 ${from} = ${data.rate} ${to}`;
+        } else {
+            document.getElementById(
+                'convertedAmount'
+            ).textContent = 'Error fetching rate';
+        }
+    }
+
+    // ==================
+    // INVESTMENT FUNCTION
+    // ==================
+
+    async function getInvestmentAdvice() {
+        const amount = document.getElementById(
+            'investAmount'
+        ).value;
+        const risk = document.getElementById(
+            'riskLevel'
+        ).value;
+
+        if (!amount) {
+            alert('Enter investment amount');
+            return;
+        }
+
+        addMessage(
+            `📈 Get investment advice for $${amount} ` +
+            `with ${risk} risk`,
+            'user'
+        );
+        showLoading();
+
+        const res = await fetch('/api/invest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: parseFloat(amount),
+                risk_level: risk
+            })
+        });
+
+        const data = await res.json();
+        removeLoading();
+
+        if (data.status === 'success') {
+            addMessage(data.advice, 'bot');
+        }
+    }
+</script>
+
+</body>
+</html>
