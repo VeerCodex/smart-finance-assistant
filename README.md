@@ -64,3 +64,6 @@ Go to: http://localhost:5000
 - Valid API keys needed
 - Python 3.8+ required
 - Modern browser required
+
+## Live Demo link
+- https://smart-finance-assistant-one.vercel.app
